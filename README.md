@@ -22,7 +22,7 @@ EMOSRPG: The RPG Plugin to make Online RPG Related Games. Whether FirstPerson, T
 designed with the most generic properties that all RPG's contain. This should be extended by your own project, but can be used
 right out of the box
 
-Features
+EMOSRPG Features
   * Patch Services
   * Account Services
   * Chat Services

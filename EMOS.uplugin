@@ -1,0 +1,34 @@
+{
+	"FileVersion": 3,
+	"Version": 1,
+	"VersionName": "0.1a",
+	"FriendlyName": "EMOS (Enhanced Multiplayer Online System)",
+	"Description": "Designed to help create online game easier, by implementing the generic classes and objects used by all online games",
+	"Category": "Networking",
+	"CreatedBy": "DigitalKarnage",
+	"CreatedByURL": "",
+	"DocsURL": "",
+	"MarketplaceURL": "",
+	"SupportURL": "",
+	"Modules": [
+		{
+			"Name": "EMOSRPG",
+			"Type": "Developer",
+			"LoadingPhase": "Default"
+		},
+		{
+			"Name": "MongoDB",
+			"Type": "Developer",
+			"LoadingPhase": "Default"
+		},
+        {
+			"Name": "Websocketpp",
+			"Type": "Developer",
+			"LoadingPhase": "Default"
+		}
+	],
+	"EnabledByDefault": true,
+	"CanContainContent": true,
+	"IsBetaVersion": true,
+	"Installed": false
+}

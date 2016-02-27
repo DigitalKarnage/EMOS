@@ -17,9 +17,9 @@
 
 #include <WebsocketppPCH.h>
 #include <Framework/UWebsocketClient_impl.h>
-#include <Framework/UWebsocketClient.h>
+#include <Framework/UWebsocketppClient.h>
 
-UWebsocketClient::UWebsocketClient(const FObjectInitializer& objectInitializer) : Super(objectInitializer)
+UWebsocketppClient::UWebsocketClient(const FObjectInitializer& objectInitializer) : Super(objectInitializer)
 {
 	bReplicates = false;
 	this->PrimaryComponentTick.bCanEverTick = true;
@@ -30,7 +30,7 @@ UWebsocketClient::UWebsocketClient(const FObjectInitializer& objectInitializer) 
 	this->p_Impl = MakeShareable<UWebsocketClient_impl>(new UWebsocketClient_impl());
 }
 
-void UWebsocketClient::TickComponent(float delta, enum ELevelTick tickType, struct FActorComponentTickFunction* thisTickFunction)
+void UWebsocketppClient::TickComponent(float delta, enum ELevelTick tickType, struct FActorComponentTickFunction* thisTickFunction)
 {
 	Super::TickComponent(delta, tickType, thisTickFunction);
 
@@ -45,19 +45,19 @@ void UWebsocketClient::TickComponent(float delta, enum ELevelTick tickType, stru
 	}
 }
 
-void UWebsocketClient::Connect(const FString& RemoteLocation, const int32 Port)
+void UWebsocketppClient::Connect(const FString& RemoteLocation, const int32 Port)
 {
 	if (p_Impl.IsValid())
 		p_Impl->Connect(RemoteLocation, Port);
 }
 
-void UWebsocketClient::Shutdown()
+void UWebsocketppClient::Shutdown()
 {
 	if (p_Impl.IsValid())
 		p_Impl->Shutdown();
 }
 
-void UWebsocketClient::K2_SendMessage(const FString& Message)
+void UWebsocketppClient::K2_SendMessage(const FString& Message)
 {
 	if (p_Impl.IsValid())
 		p_Impl->SendMessageEx(Message);

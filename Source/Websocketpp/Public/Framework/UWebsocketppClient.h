@@ -20,12 +20,12 @@
 #include <Websocketpp.h>
 #include <Runtime/Engine/Classes/Components/ActorComponent.h>
 
-#include "UWebsocketClient.generated.h"
+#include "UWebsocketppClient.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FWebsocketClientEvent, const FString&, Message);
 
 UCLASS(BlueprintType, ClassGroup = ("Websocketpp"), HideCategories = (Sockets, ComponentTick, "Component Tick", ComponentReplication, "Component Replication", Variable, "Components|Sockets", Tags, Activation, "Components|Activation"), META = (DisplayName = "Websocket Client", BlueprintSpawnableComponent) )
-class WEBSOCKETPP_API UWebsocketClient : public UActorComponent
+class WEBSOCKETPP_API UWebsocketppClient : public UActorComponent
 {
 	GENERATED_BODY()
 

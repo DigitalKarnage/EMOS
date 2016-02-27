@@ -83,7 +83,7 @@ class EMOSRPG_API ARPGCharacter : public ACharacter, public IRPGCombatInterface
 		UFUNCTION(BlueprintCallable, Category = "Combat")
 		void ClearTargetAtIndex(const int32& index);
 
-	private:
+private:
 		UFUNCTION()
 		void OnTargetOpponentStatsChanged(URPGCombatComponent* combatComponent, FRPGCharacterStats& result, const ERPGStatsUpdateType type);
 		

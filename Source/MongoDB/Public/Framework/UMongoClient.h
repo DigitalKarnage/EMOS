@@ -21,7 +21,7 @@
 
 #include "UMongoClient.generated.h"
 
-UCLASS(NotBlueprintable)
+UCLASS(BlueprintType, ClassGroup = "Database", META = (DisplayName = "MongoDB Client") )
 class MONGODB_API UMongoClient : public UObject
 {
 	GENERATED_BODY()
@@ -29,7 +29,10 @@ class MONGODB_API UMongoClient : public UObject
 	public:
 		UMongoClient(const FObjectInitializer& objectInitializer = FObjectInitializer::Get());
 
+		UFUNCTION(BlueprintCallable, Category = "Database Functions")
 		class UMongoDatabase* GetDatabase();
+
+		UFUNCTION(BlueprintCallable, Category = "Database Functions")
 		class UMongoDatabase* Connect(const FString& uriLocation = FString("mongodb://127.0.0.1"), const int32 port = 27001, const FString& dbName = FString("GameDB"));
 			
 		TSharedPtr< class UMongoClient_impl > p_Impl;

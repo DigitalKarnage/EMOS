@@ -47,18 +47,18 @@ public class EMOSRPG : ModuleRules
         );
 
         // Hide the Abstraction layer for this module
-        PrivateDependencyModuleNames.AddRange(
+        PublicDependencyModuleNames.AddRange(
             new string[] {
-                "Websocketpp"
+                "Websockets"
             }
         );
 
-        PrivateIncludePaths.AddRange(
+        PublicIncludePaths.AddRange(
             new string[]
             {
-                "Websocketpp",
-                "Websocketpp/Public",
-                "Websocketpp/Public/Framework"
+                "Websockets",
+                "Websockets/Public",
+                "Websockets/Public/Framework"
             }
         );
 

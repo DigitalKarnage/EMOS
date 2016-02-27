@@ -21,7 +21,7 @@
 
 #include "UMongoDatabase.generated.h"
 
-UCLASS(NotBlueprintable)
+UCLASS(BlueprintType, ClassGroup = "Database", META = (DisplayName = "MongoDB Database") )
 class MONGODB_API UMongoDatabase : public UObject
 {
 	GENERATED_BODY()

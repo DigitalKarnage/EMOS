@@ -16,49 +16,53 @@
 */
 
 #include <WebsocketppPCH.h>
-#include <Framework/UWebsocketClient_impl.h>
-#include <Framework/UWebsocketppClient.h>
 
-UWebsocketppClient::UWebsocketppClient(const FObjectInitializer& objectInitializer) : Super(objectInitializer)
+#include <Framework/UWebsocketConnection_impl.h>
+
+void UWebsocketConnection_impl::Close()
 {
-	bReplicates = false;
-	this->PrimaryComponentTick.bCanEverTick = true;
-	this->PrimaryComponentTick.bRunOnAnyThread = false;
-	this->PrimaryComponentTick.bTickEvenWhenPaused = true;
-	this->PrimaryComponentTick.bStartWithTickEnabled = true;
-
-	this->p_Impl = MakeShareable<UWebsocketClient_impl>(new UWebsocketClient_impl());
+	if (m_Connection.get() != NULL)
+		m_Connection->close(websocketpp::close::status::going_away, "Closed connection by the server");
 }
 
-void UWebsocketppClient::TickComponent(float delta, enum ELevelTick tickType, struct FActorComponentTickFunction* thisTickFunction)
+void UWebsocketConnection_impl::BroadcastMessage(const FString& message) const
 {
-	Super::TickComponent(delta, tickType, thisTickFunction);
+	if (m_Connection.get() != NULL)
+		m_Connection->send(std::string(TCHAR_TO_UTF8(*message)));
+}
 
-	p_Impl->Poll();
+void UWebsocketConnection_impl::AddPendingMessage(const std::string& message)
+{
+	m_PendingMessages.push_back(message);
+}
 
-	auto messages = p_Impl->GetMessages();
+const TArray<FString> UWebsocketConnection_impl::GetPendingMessages() const
+{
+	TArray<FString> result;
 
-	if (EventOnMessageReceived.IsBound())
+	//if (m_PendingMessages.num() > 0)
+	//{
+	//	for (auto& message : m_PendingMessages)
+	//		result.Add(message);
+
+	//	m_PendingMessages->Empty();
+	//}
+
+	if (m_PendingMessages.size() > 0)
 	{
-		for (auto& message : messages)
-			EventOnMessageReceived.Broadcast(message);
+		for (auto& message : m_PendingMessages)
+			result.Add(UTF8_TO_TCHAR(message.c_str()));
+
+		m_PendingMessages.clear();
 	}
+
+	return result;
 }
 
-void UWebsocketppClient::Connect(const FString& RemoteLocation, const int32 Port)
+UWebsocketppConnection* UWebsocketConnection_impl::CreateConnection(FWebsocketConnection connection)
 {
-	if (p_Impl.IsValid())
-		p_Impl->Connect(RemoteLocation, Port);
-}
+	auto result = NewObject<UWebsocketppConnection>();
+	result->p_Impl->m_Connection = connection;
 
-void UWebsocketppClient::Shutdown()
-{
-	if (p_Impl.IsValid())
-		p_Impl->Shutdown();
-}
-
-void UWebsocketppClient::K2_SendMessage(const FString& Message)
-{
-	if (p_Impl.IsValid())
-		p_Impl->SendMessageEx(Message);
+	return result;
 }

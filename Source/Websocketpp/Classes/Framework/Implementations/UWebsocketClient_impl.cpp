@@ -20,11 +20,9 @@
 
 void UWebsocketClient_impl::Connect(const FString& RemoteLocation, const int32 Port)
 {
-	if (bIsConnected || bIsConnecting)
+	if (bIsConnected)
 		return;
-
-	bIsConnecting = true;
-
+	
 	if (Port > 0 && !RemoteLocation.IsEmpty())
 	{
 		auto ip = RemoteLocation.Replace(UTF8_TO_TCHAR("ws://"), UTF8_TO_TCHAR(""));
@@ -32,23 +30,22 @@ void UWebsocketClient_impl::Connect(const FString& RemoteLocation, const int32 P
 
 		try
 		{
+			m_WebsocketClient.init_asio();
+
 			websocketpp::lib::error_code errorCode;
 			m_WebsocketClient.clear_access_channels(websocketpp::log::alevel::all);
-			m_WebsocketClient.clear_error_channels(websocketpp::log::elevel::all);
-
+			m_WebsocketClient.clear_error_channels(websocketpp::log::elevel::all);			
 			
+			auto connection = m_WebsocketClient.get_connection(url, errorCode);
+			m_Connection = m_WebsocketClient.get_con_from_hdl(connection);
 
-			m_WebsocketClient.init_asio();
+			m_WebsocketClient.connect(connection);
 
 			m_WebsocketClient.set_open_handler(bind(&UWebsocketClient_impl::OnWebsocketConnected, this, ::_1));
 			m_WebsocketClient.set_close_handler(bind(&UWebsocketClient_impl::OnWebsocketConnectionClosed, this, ::_1));
 			m_WebsocketClient.set_message_handler(bind(&UWebsocketClient_impl::OnMessageReceived, this, ::_1, ::_2));
-			m_WebsocketClient.set_ping_handler(bind(&UWebsocketClient_impl::OnPingRecieved, this, ::_1, ::_2));
 			
-			auto connection = m_WebsocketClient.get_connection(url, errorCode);
-			m_WebsocketClient.connect(connection);
-
-			m_WebsocketClient.poll_one();
+			bIsConnecting = true;
 		}
 		catch (std::exception&) {} // just swallow the errors for now 
 	}
@@ -56,6 +53,9 @@ void UWebsocketClient_impl::Connect(const FString& RemoteLocation, const int32 P
 
 void UWebsocketClient_impl::Poll(const int32 maxIterations)
 {
+	if (!bIsConnecting && !bIsConnected)
+		return;
+
 	auto msgRead = 0;
 
 	if (maxIterations > 0)
@@ -81,7 +81,7 @@ void UWebsocketClient_impl::Poll(const int32 maxIterations)
 void UWebsocketClient_impl::Shutdown()
 {
 	if (bIsConnected)
-		m_WebsocketClient.close(m_ConnectionHandle, websocketpp::close::status::normal, "Client Forced Shutdown");
+		m_Connection->close(websocketpp::close::status::going_away, "");
 }
 
 void UWebsocketClient_impl::SendMessageEx(const FString& Message)
@@ -90,10 +90,8 @@ void UWebsocketClient_impl::SendMessageEx(const FString& Message)
 	{
 		// out state changed once we gained access to the thread
 		if (bIsConnected)
-		{
-			auto connection = m_WebsocketClient.get_con_from_hdl(m_ConnectionHandle);
-			connection->send( std::string(TCHAR_TO_UTF8(*Message)) );
-		}
+			m_Connection->send(std::string(TCHAR_TO_UTF8(*Message)));
+
 		else m_OutgoingMessages.Add(Message);
 	}
 }
@@ -115,15 +113,11 @@ TArray<FString> UWebsocketClient_impl::GetMessages()
 
 void UWebsocketClient_impl::OnWebsocketConnected(FWebsocketConnectionHandle connectionHandle)
 {
-	m_ConnectionHandle = connectionHandle;
-
 	bIsConnected = true;
 	bIsConnecting = false;
 
-	auto connection = m_WebsocketClient.get_con_from_hdl(connectionHandle);
-
 	for (auto& message : m_OutgoingMessages)
-		connection->send(std::string(TCHAR_TO_UTF8(*message)));
+		m_Connection->send(std::string(TCHAR_TO_UTF8(*message)));
 
 	m_OutgoingMessages.Empty();
 }
@@ -143,11 +137,4 @@ void UWebsocketClient_impl::OnMessageReceived(FWebsocketConnectionHandle connect
 		auto msgStr = msg->get_payload().c_str();
 		m_IncomingMessages.Add( FString(UTF8_TO_TCHAR(msg->get_payload().c_str())) );
 	}
-}
-
-bool UWebsocketClient_impl::OnPingRecieved(FWebsocketConnectionHandle connectionHandle, std::string msg)
-{
-	auto connection = m_WebsocketClient.get_con_from_hdl(connectionHandle);
-
-	return true;	
 }

@@ -30,6 +30,9 @@
 #include <system_error>
 #include <random>
 #include <memory>
+#include <iostream>
+#include <condition_variable>
+#include <mutex>
 
 #define _WEBSOCKETPP_CPP11_STL_
 #define _WEBSOCKETPP_CPP11_THREAD_
@@ -54,15 +57,10 @@
 #include "AllowWindowsPlatformTypes.h"
 #endif
 
-#include <condition_variable>
-
-#include "websocketpp/config/core.hpp"
+#include "websocketpp/config/asio_no_tls.hpp"
 #include "websocketpp/config/asio_no_tls_client.hpp"
-
 #include "websocketpp/server.hpp"
 #include "websocketpp/client.hpp"
-
-#include <iostream>
 
 #if defined(PLATFORM_WINDOWS)
 #pragma warning( pop )
@@ -70,14 +68,11 @@
 #include "HideWindowsPlatformTypes.h"
 #endif
 
-
-
-//typedef websocketpp::server<websocketpp::config::core> FWebsocketServer;
-//typedef websocketpp::client<websocketpp::config::asio_client> FWebsocketClient;
-//typedef websocketpp::connection_hdl FWebsocketConnection;
-//
-//typedef FWebsocketServer::message_ptr FWebsocketServerMessage;
-//typedef websocketpp::config::core_client::message_type::ptr FWebsocketClientMessage;
+typedef websocketpp::client<websocketpp::config::asio_client> FWebsocketClient;
+typedef websocketpp::config::asio_client::message_type::ptr FWebsocketClientMessagePtr;
+typedef std::shared_ptr< websocketpp::connection<websocketpp::config::asio> > FWebsocketConnection;
+typedef std::shared_ptr< websocketpp::connection<websocketpp::config::asio_client> > FWebsocketClientConnection;
+typedef websocketpp::connection_hdl FWebsocketConnectionHandle;
 
 // I hate the naming convention of the alias' for the std library
 using websocketpp::lib::ref;

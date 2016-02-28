@@ -18,38 +18,43 @@
 #pragma once
 
 #include <WebsocketppPCH.h>
+#include <Framework/UWebsocketppConnection.h>
 
 #if defined(PLATFORM_WINDOWS)
 #pragma warning( disable : 4503)
 #endif
 
-class UWebsocketClient_impl
+typedef websocketpp::server<websocketpp::config::asio> FWebsocketServer;
+typedef FWebsocketServer::message_ptr FWebsocketServerMessage;
+
+class UWebsocketServer_impl
 {
 	public:
-		UWebsocketClient_impl()
-		: m_IncomingMessages( TArray<FString>() ),m_OutgoingMessages( TArray<FString>() ) { }
-
-		void Connect(const FString& RemoteLocation = FString("echo.websocket.org"), const int32 Port = 80);
+		UWebsocketServer_impl() { }
+				
+		void Listen(const int32 Port = 80);
 		void Poll(const int32 maxIterations = -1);
+		void BroadcastMessage(const FString& message, const TArray<UWebsocketppConnection*> exclusions);
 		void Shutdown();
-		void SendMessageEx(const FString& Message);
 
-		TArray<FString> GetMessages();
+		TArray<UWebsocketppConnection*> GetPendingConnections();
+		TArray<UWebsocketppConnection*> GetRecentDisconnections();
+		TArray<UWebsocketppConnection*> GetConnections();
+
+	private:				
+		void OnClientConnected(FWebsocketConnectionHandle connection);
+		void OnConnectionFailed(FWebsocketConnectionHandle connection);
+		void OnClientDisconnected(FWebsocketConnectionHandle connection);
+		void OnClientMessageReceived(FWebsocketConnectionHandle connection, FWebsocketServerMessage msg);
 
 	private:
-		void OnWebsocketConnected(FWebsocketConnectionHandle connectionHandle);
-		void OnWebsocketConnectionClosed(FWebsocketConnectionHandle connectionHandle);
-		void OnMessageReceived(FWebsocketConnectionHandle connectionHandle, FWebsocketClientMessagePtr msg);
-
-	private:
-		bool bIsConnected = false;
-		bool bIsConnecting = false;
-		FWebsocketClient m_WebsocketClient;
-		FWebsocketClientConnection m_Connection;
-
-		TArray<FString> m_IncomingMessages;
-		TArray<FString> m_OutgoingMessages;
-
-		std::mutex m_IncomingMutex;
-		std::mutex m_OutgoingMutex;
+		bool bIsListening = false;
+		bool bIsStartingListener = false;
+		FWebsocketServer m_WebsocketServer;
+		
+		std::thread m_ListenerThread;
+		TArray<UWebsocketppConnection*> m_Connections;
+		TArray<UWebsocketppConnection*> m_PendingConnections;
+		TArray<UWebsocketppConnection*> m_RecentDisconnections;
+		std::map<FWebsocketConnection, UWebsocketppConnection*> m_ConnectionMapping;
 };

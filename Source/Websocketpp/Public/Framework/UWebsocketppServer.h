@@ -25,18 +25,45 @@
 #include "UWebsocketppServer.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FWebsocketServerEvent, const UWebsocketppConnection*, connection, const FString&, Message);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FWebsocketConnectionEvent, const UWebsocketppConnection*, connection, const bool, isConnecting);
 
-UCLASS(BlueprintType, ClassGroup = "Websocketpp", HideCategories = (Sockets, ComponentTick, "Component Tick", ComponentReplication, "Component Replication", Variable, "Components|Sockets", Tags, Activation, "Components|Activation"), META = (DisplayName = "Websocket Server") )
+UCLASS(BlueprintType, ClassGroup = "Websocketpp", HideCategories = (Sockets, ComponentTick, "Component Tick", ComponentReplication, "Component Replication", Variable, "Components|Sockets", Tags, Activation, "Components|Activation"), META = (DisplayName = "Websocket Server", BlueprintSpawnableComponent) )
 class WEBSOCKETPP_API UWebsocketppServer : public UActorComponent
 {
 	GENERATED_BODY()
 
 	public:
-		UPROPERTY(BlueprintAssignable, Category = "Events")
+		UPROPERTY(BlueprintAssignable, Category = "Events", META = (DisplayName = "Event On Message Received") )
 		FWebsocketServerEvent EventOnMessageRecieved;
 
+		UPROPERTY(BlueprintAssignable, Category = "Events", META = (DisplayName = "Event On Client Connection Changed") )
+		FWebsocketConnectionEvent EventOnClientConnectionChanged;
+
 	public:
-		UWebsocketppServer(const FObjectInitializer objectInitializer = FObjectInitializer::Get());
+		UWebsocketppServer(const FObjectInitializer& objectInitializer = FObjectInitializer::Get());
 
+		virtual void TickComponent(float delta, enum ELevelTick tickType, struct FActorComponentTickFunction* thisTickFunction) override;
+		virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+		
+		/** 
+			Start listening for websocket connections and communications on the supplied port
+			@para Port a value indicating the port to start listening on
+		*/
+		UFUNCTION(BlueprintCallable, Category = "Functions", META = (DisplayName = "Listen", ClampMin = 1, ClampMax = 65535, UIMin = 1, UIMax = 65535) )
+		void Listen(const int32 Port = 80);
 
+		/** 
+			Broadcasts a message to all connected clients, excluding all the connections in the 'exclusions' collection
+			@param message a string message to broadcast to all connections
+			@param exclusions a collection of connections to exclude from the broadcast
+		*/
+		UFUNCTION(BlueprintCallable, Category = "Functions", META = (DisplayName = "Broadcast Message") )
+		void BroadcastMessage(const FString& message, const TArray<UWebsocketppConnection*> exclusions);
+
+		/**  Returns a collection of websocket connection's connected to this server */
+		UFUNCTION(BlueprintCallable, Category = "Functions", META = (DisplayName = "Get Connections") )
+		TArray<UWebsocketppConnection*> GetConnections();
+
+	private:
+		TSharedPtr<class UWebsocketServer_impl> p_Impl;
 };

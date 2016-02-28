@@ -35,12 +35,12 @@ class WEBSOCKETPP_API UWebsocketppClient : public UActorComponent
 		FWebsocketClientEvent EventOnMessageReceived;
 
 	public:
-		UWebsocketClient(const FObjectInitializer& objectInitializer = FObjectInitializer::Get());
+		UWebsocketppClient(const FObjectInitializer& objectInitializer = FObjectInitializer::Get());
 
 		virtual void TickComponent(float delta, enum ELevelTick tickType, struct FActorComponentTickFunction* thisTickFunction) override;
 
 		/**
-			Attempts to connect to a listenting socket server, with the supplied parameters
+			Attempts to connect to a listening socket server, with the supplied parameters
 			@param RemoteLocation a string value representing the dns host of the websocket server
 			@param Port an integer value representing the port on the host to connect to
 		*/

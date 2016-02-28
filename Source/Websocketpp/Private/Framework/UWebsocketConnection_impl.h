@@ -15,50 +15,26 @@
 	LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+#pragma once
+
 #include <WebsocketppPCH.h>
-#include <Framework/UWebsocketClient_impl.h>
-#include <Framework/UWebsocketppClient.h>
 
-UWebsocketppClient::UWebsocketppClient(const FObjectInitializer& objectInitializer) : Super(objectInitializer)
-{
-	bReplicates = false;
-	this->PrimaryComponentTick.bCanEverTick = true;
-	this->PrimaryComponentTick.bRunOnAnyThread = false;
-	this->PrimaryComponentTick.bTickEvenWhenPaused = true;
-	this->PrimaryComponentTick.bStartWithTickEnabled = true;
+#include <UWebsocketserver_impl.h>
+#include <UWebsocketppConnection.h>
 
-	this->p_Impl = MakeShareable<UWebsocketClient_impl>(new UWebsocketClient_impl());
-}
+class UWebsocketConnection_impl
+{	
+	public:
+		UWebsocketConnection_impl() { }
 
-void UWebsocketppClient::TickComponent(float delta, enum ELevelTick tickType, struct FActorComponentTickFunction* thisTickFunction)
-{
-	Super::TickComponent(delta, tickType, thisTickFunction);
+		void Close();
+		void BroadcastMessage(const FString& message) const;
+		void AddPendingMessage(const std::string& message);
+		const TArray<FString> GetPendingMessages() const;
 
-	p_Impl->Poll();
+		static UWebsocketppConnection* CreateConnection(FWebsocketConnection connection);
 
-	auto messages = p_Impl->GetMessages();
-
-	if (EventOnMessageReceived.IsBound())
-	{
-		for (auto& message : messages)
-			EventOnMessageReceived.Broadcast(message);
-	}
-}
-
-void UWebsocketppClient::Connect(const FString& RemoteLocation, const int32 Port)
-{
-	if (p_Impl.IsValid())
-		p_Impl->Connect(RemoteLocation, Port);
-}
-
-void UWebsocketppClient::Shutdown()
-{
-	if (p_Impl.IsValid())
-		p_Impl->Shutdown();
-}
-
-void UWebsocketppClient::K2_SendMessage(const FString& Message)
-{
-	if (p_Impl.IsValid())
-		p_Impl->SendMessageEx(Message);
-}
+	private:		
+		mutable std::vector<std::string> m_PendingMessages;
+		mutable FWebsocketConnection m_Connection;
+};

@@ -27,4 +27,13 @@ class WEBSOCKETPP_API UWebsocketppConnection : public UObject
 {
 	GENERATED_BODY()
 
+	public:
+		UWebsocketppConnection(const FObjectInitializer& objectInitializer = FObjectInitializer::Get());
+
+		void Close();
+		void BroadcastMessage(const FString& message);
+		TArray<FString> GetPendingMessages();
+
+	public:
+		TSharedPtr<class UWebsocketConnection_impl> p_Impl;
 };

@@ -20,9 +20,11 @@
 
 void UWebsocketClient_impl::Connect(const FString& RemoteLocation, const int32 Port)
 {
-	if (bIsConnected)
+	if (bIsConnected || bIsConnecting)
 		return;
 	
+	bIsConnecting = true;
+
 	if (Port > 0 && !RemoteLocation.IsEmpty())
 	{
 		auto ip = RemoteLocation.Replace(UTF8_TO_TCHAR("ws://"), UTF8_TO_TCHAR(""));
@@ -34,18 +36,16 @@ void UWebsocketClient_impl::Connect(const FString& RemoteLocation, const int32 P
 
 			websocketpp::lib::error_code errorCode;
 			m_WebsocketClient.clear_access_channels(websocketpp::log::alevel::all);
-			m_WebsocketClient.clear_error_channels(websocketpp::log::elevel::all);			
-			
-			auto connection = m_WebsocketClient.get_connection(url, errorCode);
-			m_Connection = m_WebsocketClient.get_con_from_hdl(connection);
-
-			m_WebsocketClient.connect(connection);
+			m_WebsocketClient.clear_error_channels(websocketpp::log::elevel::all);
 
 			m_WebsocketClient.set_open_handler(bind(&UWebsocketClient_impl::OnWebsocketConnected, this, ::_1));
 			m_WebsocketClient.set_close_handler(bind(&UWebsocketClient_impl::OnWebsocketConnectionClosed, this, ::_1));
 			m_WebsocketClient.set_message_handler(bind(&UWebsocketClient_impl::OnMessageReceived, this, ::_1, ::_2));
 			
-			bIsConnecting = true;
+			auto connection = m_WebsocketClient.get_connection(url, errorCode);
+			m_Connection = m_WebsocketClient.get_con_from_hdl(connection);
+
+			m_WebsocketClient.connect(connection);
 		}
 		catch (std::exception&) {} // just swallow the errors for now 
 	}

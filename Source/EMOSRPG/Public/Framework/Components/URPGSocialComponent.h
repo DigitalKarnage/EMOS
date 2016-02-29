@@ -23,9 +23,8 @@
 
 #include "URPGSocialComponent.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FRPGMailServiceEvent);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FRPGMailServiceEvent, const FRPGMailMessage&, message);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FRPGChatServiceEvent, const FRPGChatMessage&, message);
-
 
 UCLASS(BlueprintType, ClassGroup = ("EMOS RPG"), HideCategories = (Sockets, ComponentTick, "Component Tick", ComponentReplication, "Component Replication", Variable, "Components|Sockets", Tags, Activation, "Components|Activation"), META = (DisplayName = "RPG Social Component", BlueprintSpawnableComponent))
 class EMOSRPG_API URPGSocialComponent : public UActorComponent
@@ -39,10 +38,6 @@ class EMOSRPG_API URPGSocialComponent : public UActorComponent
 		UPROPERTY(BlueprintAssignable, Category = "In-game Mail Services", META = (DisplayName = "Event On Mail Message Received"))
 		FRPGMailServiceEvent EventOnMailMessageReceived;
 
-	private:
-		// Backing store for all the mail messages for the owner of this object
-		TSharedPtr< TArray< FRPGMailMessage > > MailMessages;
-
 	public:
 		URPGSocialComponent(const FObjectInitializer& objectInitializer = FObjectInitializer::Get());
 
@@ -50,36 +45,41 @@ class EMOSRPG_API URPGSocialComponent : public UActorComponent
 		virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const;		
 		virtual void TickComponent(float delta, enum ELevelTick tickType, struct FActorComponentTickFunction* thisTickFunction) override;
 
-	//	/** Sends a chat message to the server for routing */
-	//	UFUNCTION(Server, Reliable, BlueprintCallable, WithValidation, Category = "Chat Services", META = (DisplayName = "Send Chat Message"))
-	//	void Server_SendChatMessage(const FRPGChatMessage& message);
+		/** Sends a chat message to the server for routing */
+		UFUNCTION(Server, Reliable, BlueprintCallable, WithValidation, Category = "Chat Services", META = (DisplayName = "Send Chat Message"))
+		void Server_SendChatMessage(const FRPGChatMessage& message);
 
-	//	/** Sends a mail message to the server for routing */
-	//	UFUNCTION(Server, Reliable, BlueprintCallable, WithValidation, Category = "In-game Mail Services", META = (DisplayName = "Send Mail Message"))
-	//	void Server_SendMailMessage(const FRPGMailMessage& message);
+		/** Sends a mail message to the server for routing */
+		UFUNCTION(Server, Reliable, BlueprintCallable, WithValidation, Category = "In-game Mail Services", META = (DisplayName = "Send Mail Message"))
+		void Server_SendMailMessage(const FRPGMailMessage& message);
 
-	//	/** Retrives all the messages for the owner of this object */
-	//	UFUNCTION(BlueprintCallable, Category = "In-game Mail Services", META = (DisplayName = "Get Mail Messages"))
-	//	void GetMailMessages(TArray< FRPGMailMessage >& result);
+		/** Deletes a message at the specified index */
+		UFUNCTION(Server, Reliable, BlueprintCallable, WithValidation, Category = "In-game Mail Service", META = (DisplayName = "Delete Mail Message") )
+		void Server_DeleteMailMessage(const int32 messageIndex);
+		
+		/** Retrives all the messages for the owner of this object */
+		UFUNCTION(BlueprintCallable, Category = "In-game Mail Services", META = (DisplayName = "Get Mail Messages"))
+		void GetMailMessages(TArray< FRPGMailMessage >& result);
 
-	//	/** Deletes a message at the specified index */
-	//	UFUNCTION(BlueprintCallable, Category = "In-game Mail Service", META = (DisplayName = "Delete Message") )
-	//	void DeleteMessage(int32 messageIndex);
+	private:
+		// Should be called after InitializeComponent
+		UFUNCTION(Server, Reliable, WithValidation)
+		void Server_GetAllMailboxMessages(); 
 
-	//private:
-	//	// Should be called after InitializeComponent		
-	//	UFUNCTION(Server, Reliable, WithValidation)
-	//	void Server_GetAllMailboxMessages(); 
+		/** A chat message was recieved */
+		UFUNCTION(Client, Reliable)
+		void Client_OnChatMessageReceived(const FRPGChatMessage& message);
 
-	//	/** A chat message was recieved */
-	//	UFUNCTION(Client, Reliable)
-	//	void Client_OnChatMessageReceived(const FRPGChatMessage& message);
+		/** A mail message was received */
+		UFUNCTION(Client, Reliable)
+		void Client_OnMailMessageReceived(const FRPGMailMessage& message);
 
-	//	/** A mail message was received */
-	//	UFUNCTION(Client, Reliable)
-	//	void Client_OnMailMessageReceived(const FRPGMailMessage& message);
+		/** all of the mail messages have been retrieved */
+		UFUNCTION(Client, Reliable)
+		void Client_OnMailboxMessagesRetrieved(const TArray< FRPGMailMessage >& mailboxMessages);
 
-	//	/** all of the mail messages have been retrieved */
-	//	UFUNCTION(Client, Reliable)
-	//	void Client_OnMailboxMessagesRetrieved(const TArray< FRPGMailMessage >& mailboxMessages);
+	private:
+		mutable TSharedPtr< TArray<FRPGChatMessage> > p_ChatMessages;
+		mutable TSharedPtr< TArray<FRPGMailMessage> > p_MailMessages;
+		mutable TSharedPtr< class SocialComponentServices > p_Services;
 };

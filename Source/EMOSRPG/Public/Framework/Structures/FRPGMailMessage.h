@@ -18,8 +18,8 @@
 #pragma once
 
 #include <EMOSRPG.h>
+#include <Structures/FRPGItemInfo.h>
 #include "FRPGMailMessage.generated.h"
-
 
 USTRUCT(BlueprintType, META = (DisplayName = "RPG Mail Message"))
 struct EMOSRPG_API FRPGMailMessage
@@ -41,24 +41,28 @@ struct EMOSRPG_API FRPGMailMessage
 		FString Sender;
 
 		/** Gets or sets a value representing the subject for the message */
-		UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "In-game Mail Services", META = (DisplayName = "Message"))
+		UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "In-game Mail Services", META = (DisplayName = "Subject"))
 		FString Subject;
 
 		/** Gets or sets a value representing the message to route */
 		UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "In-game Mail Services", META = (DisplayName = "Message") )
 		FString Message;
 
-		/** Gets or sets a value indicating the recipient for 'private' messages */
+		/** Gets or sets a value indicating the recipient for the message */
 		UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "In-game Mail Services", META = (DisplayName = "Recipient") )
 		FString Recipient;
+
+		/** Gets or sets a value indicating the date at which this message will be automatically removed from your inbox */
+		UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "In-game Mail Services", META = (DisplayName = "Experation Date"))
+		FDateTime ExperationDate;
 
 		/** Gets or sets a value indicating the amount of currency to send to the recipient */
 		UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "In-game Mail Services", META = (DisplayName = "Attached Currency") )
 		int32 AttachedCurrency;
 
 		/** Gets or sets a collection of item(s) attached to the message to be received by the recipient */
-		//UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "In-game Mail Services", META = (DisplayName = "Attached Items"))
-		//TArray< FRPGItemInfo > AttachedItems;
+		UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "In-game Mail Services", META = (DisplayName = "Attached Items"))
+		TArray< FRPGItemInfo > AttachedItems;
 
 		/** Gets or sets a value indicating the total cost to send this message */
 		UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "In-game Mail Services", META = (DisplayName = "Send Cost") )
@@ -69,6 +73,10 @@ struct EMOSRPG_API FRPGMailMessage
 		int32 CODPrice;
 
 		/** Gets or sets a value indicating that there is a price to pay to receive the items attached to this message */
-		UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "In-game Mail Services", META = (DisplayName = "Is Cash On Delivery?"))
+		UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "In-game Mail Services", META = (DisplayName = "Is Cash On Delivery?") )
 		bool bIsCOD;
+
+		/** Gets or sets a value indicating whether this message has been read by the receiver */
+		UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "In-game Mail Services", META = (DisplayName = "Is New Message"))
+		bool bIsNewMessage;
 };

@@ -34,7 +34,16 @@ public class EMOSRPG : ModuleRules
                 "Http",
                 "Json",
                 "JsonUtilities",
-                "UMG"
+                "UMG",
+                "Websocketpp"
+            }
+        );
+
+        PrivateIncludePaths.AddRange(
+            new string[]
+            {
+                "EMOSRPG/Private",
+                "EMOSRPG/Private/Framework"
             }
         );
 
@@ -43,32 +52,16 @@ public class EMOSRPG : ModuleRules
             {
                 "EMOSRPG/Public",
                 "EMOSRPG/Public/Framework",
-            }
-        );
-
-        // Hide the Abstraction layer for this module
-        PublicDependencyModuleNames.AddRange(
-            new string[] {
-                "Websocketpp"
-            }
-        );
-
-        PublicIncludePaths.AddRange(
-            new string[]
-            {
                 "Websocketpp",
                 "Websocketpp/Public",
                 "Websocketpp/Public/Framework"
             }
-        );
+        );        
 
-        if (Target.Platform == UnrealTargetPlatform.Win32 ||
-            Target.Platform == UnrealTargetPlatform.Win64 ||
-            Target.Platform == UnrealTargetPlatform.Linux && 
-            (UEBuildConfiguration.bWithServerCode || UEBuildConfiguration.bBuildEditor) )
-        {
-            // We only link the MongoDB Module, if we building for windows or linux servers/editors
-
+        if ((Target.Platform == UnrealTargetPlatform.Win32 || Target.Platform == UnrealTargetPlatform.Win64 || Target.Platform == UnrealTargetPlatform.Linux) && 
+            (UEBuildConfiguration.bWithServerCode || UEBuildConfiguration.bBuildEditor) 
+        ) {
+            // We only link the MongoDB Module, if we building for windows, linux (and eventually mac) servers/editors
             PrivateDependencyModuleNames.AddRange(
                 new string[] {
                     "MongoDB",

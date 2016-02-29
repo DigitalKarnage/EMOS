@@ -16,6 +16,7 @@
 */
 
 #include <EMOSRPG.h>
+#include <Framework/Components/SocialComponentServices.h>
 #include <Framework/Components/URPGSocialComponent.h>
 
 URPGSocialComponent::URPGSocialComponent(const FObjectInitializer& objectInitializer)
@@ -33,6 +34,10 @@ URPGSocialComponent::URPGSocialComponent(const FObjectInitializer& objectInitial
 	this->PrimaryComponentTick.bTickEvenWhenPaused = true;
 	this->PrimaryComponentTick.bStartWithTickEnabled = true;
 	this->PrimaryComponentTick.bAllowTickOnDedicatedServer = true;
+
+	this->p_ChatMessages = MakeShareable< TArray<FRPGChatMessage> >(new TArray<FRPGChatMessage>());
+	this->p_MailMessages = MakeShareable< TArray<FRPGMailMessage> >(new TArray<FRPGMailMessage>());
+	this->p_Services = MakeShareable<SocialComponentServices>(new SocialComponentServices());
 }
 
 void URPGSocialComponent::InitializeComponent()
@@ -53,3 +58,68 @@ void URPGSocialComponent::TickComponent(float delta, ELevelTick tickType, FActor
 	Super::TickComponent(delta, tickType, thisTickFunction);
 
 }
+
+bool URPGSocialComponent::Server_SendChatMessage_Validate(const FRPGChatMessage& message)
+{
+
+	return true;
+}
+
+void URPGSocialComponent::Server_SendChatMessage_Implementation(const FRPGChatMessage& message)
+{
+
+}
+
+bool URPGSocialComponent::Server_SendMailMessage_Validate(const FRPGMailMessage& message)
+{
+
+	return true;
+}
+
+void URPGSocialComponent::Server_SendMailMessage_Implementation(const FRPGMailMessage& message)
+{
+
+}
+
+bool URPGSocialComponent::Server_DeleteMailMessage_Validate(const int32 messageIndex)
+{
+
+	return true;
+}
+
+void URPGSocialComponent::Server_DeleteMailMessage_Implementation(const int32 messageIndex)
+{
+
+}
+
+void URPGSocialComponent::GetMailMessages(TArray< FRPGMailMessage >& result)
+{
+
+}
+
+bool URPGSocialComponent::Server_GetAllMailboxMessages_Validate()
+{
+
+	return true;
+}
+
+void URPGSocialComponent::Server_GetAllMailboxMessages_Implementation()
+{
+
+}
+
+void URPGSocialComponent::Client_OnChatMessageReceived_Implementation(const FRPGChatMessage& message)
+{
+
+}
+
+void URPGSocialComponent::Client_OnMailMessageReceived_Implementation(const FRPGMailMessage& message)
+{
+
+}
+
+void URPGSocialComponent::Client_OnMailboxMessagesRetrieved_Implementation(const TArray< FRPGMailMessage >& mailboxMessages)
+{
+
+}
+

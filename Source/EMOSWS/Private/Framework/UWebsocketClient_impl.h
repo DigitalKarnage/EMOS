@@ -15,34 +15,41 @@
 	LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include <WebsocketppPCH.h>
+#pragma once
 
-#include <Framework/UWebsocketConnection_impl.h>
-#include <Framework/UWebsocketppConnection.h>
+#include <EMOSWSPCH.h>
 
-UWebsocketppConnection::UWebsocketppConnection(const FObjectInitializer& objectInitializer)
-	: Super(objectInitializer)
+#if defined(PLATFORM_WINDOWS)
+#pragma warning( disable : 4503)
+#endif
+
+class UWebsocketClient_impl
 {
-	this->SetFlags(RF_RootSet);
-	p_Impl = MakeShareable<UWebsocketConnection_impl>(new UWebsocketConnection_impl());
-}
+	public:
+		UWebsocketClient_impl()
+		: m_IncomingMessages( TArray<FString>() ),m_OutgoingMessages( TArray<FString>() ) { }
 
-void UWebsocketppConnection::Close()
-{
-	if (p_Impl.IsValid())
-		p_Impl->Close();
-}
+		void Connect(const FString& RemoteLocation = FString("echo.websocket.org"), const int32 Port = 80);
+		void Poll(const int32 maxIterations = -1);
+		void Shutdown();
+		void SendMessageEx(const FString& Message);
 
-void UWebsocketppConnection::BroadcastMessage(const FString& message)
-{
-	if (p_Impl.IsValid())
-		p_Impl->BroadcastMessage(message);
-}
+		TArray<FString> GetMessages();
 
-TArray<FString> UWebsocketppConnection::GetPendingMessages()
-{
-	if (p_Impl.IsValid())
-		return p_Impl->GetPendingMessages();
+	private:
+		void OnWebsocketConnected(FWebsocketConnectionHandle connectionHandle);
+		void OnWebsocketConnectionClosed(FWebsocketConnectionHandle connectionHandle);
+		void OnMessageReceived(FWebsocketConnectionHandle connectionHandle, FWebsocketClientMessagePtr msg);
 
-	return TArray<FString>();
-}
+	private:
+		bool bIsConnected = false;
+		bool bIsConnecting = false;
+		FWebsocketClient m_WebsocketClient;
+		FWebsocketClientConnection m_Connection;
+
+		TArray<FString> m_IncomingMessages;
+		TArray<FString> m_OutgoingMessages;
+
+		std::mutex m_IncomingMutex;
+		std::mutex m_OutgoingMutex;
+};

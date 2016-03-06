@@ -17,7 +17,7 @@
 
 #pragma once
 
-#include <Websocketpp.h>
+#include <EMOSWS.h>
 #include <Runtime/Engine/Classes/Components/ActorComponent.h>
 
 #include <Framework/UWebsocketppConnection.h>
@@ -28,7 +28,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FWebsocketServerEvent, const UWebso
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FWebsocketConnectionEvent, const UWebsocketppConnection*, connection, const bool, isConnecting);
 
 UCLASS(BlueprintType, ClassGroup = "Websocketpp", HideCategories = (Sockets, ComponentTick, "Component Tick", ComponentReplication, "Component Replication", Variable, "Components|Sockets", Tags, Activation, "Components|Activation"), META = (DisplayName = "Websocket Server", BlueprintSpawnableComponent) )
-class WEBSOCKETPP_API UWebsocketppServer : public UActorComponent
+class EMOSWS_API UWebsocketppServer : public UActorComponent
 {
 	GENERATED_BODY()
 

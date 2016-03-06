@@ -15,41 +15,54 @@
 	LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#pragma once
+#include <EMOSWSPCH.h>
 
-#include <WebsocketppPCH.h>
+#include <Framework/UWebsocketConnection_impl.h>
 
-#if defined(PLATFORM_WINDOWS)
-#pragma warning( disable : 4503)
-#endif
-
-class UWebsocketClient_impl
+void UWebsocketConnection_impl::Close()
 {
-	public:
-		UWebsocketClient_impl()
-		: m_IncomingMessages( TArray<FString>() ),m_OutgoingMessages( TArray<FString>() ) { }
+	if (m_Connection.get() != NULL)
+		m_Connection->close(websocketpp::close::status::going_away, "Closed connection by the server");
+}
 
-		void Connect(const FString& RemoteLocation = FString("echo.websocket.org"), const int32 Port = 80);
-		void Poll(const int32 maxIterations = -1);
-		void Shutdown();
-		void SendMessageEx(const FString& Message);
+void UWebsocketConnection_impl::BroadcastMessage(const FString& message) const
+{
+	if (m_Connection.get() != NULL)
+		m_Connection->send(std::string(TCHAR_TO_UTF8(*message)));
+}
 
-		TArray<FString> GetMessages();
+void UWebsocketConnection_impl::AddPendingMessage(const std::string& message)
+{
+	m_PendingMessages.push_back(message);
+}
 
-	private:
-		void OnWebsocketConnected(FWebsocketConnectionHandle connectionHandle);
-		void OnWebsocketConnectionClosed(FWebsocketConnectionHandle connectionHandle);
-		void OnMessageReceived(FWebsocketConnectionHandle connectionHandle, FWebsocketClientMessagePtr msg);
+const TArray<FString> UWebsocketConnection_impl::GetPendingMessages() const
+{
+	TArray<FString> result;
 
-	private:
-		bool bIsConnected = false;
-		bool bIsConnecting = false;
-		FWebsocketClient m_WebsocketClient;
-		FWebsocketClientConnection m_Connection;
+	//if (m_PendingMessages.num() > 0)
+	//{
+	//	for (auto& message : m_PendingMessages)
+	//		result.Add(message);
 
-		TArray<FString> m_IncomingMessages;
-		TArray<FString> m_OutgoingMessages;
+	//	m_PendingMessages->Empty();
+	//}
 
-		std::mutex m_IncomingMutex;
-		std::mutex m_OutgoingMutex;
-};
+	if (m_PendingMessages.size() > 0)
+	{
+		for (auto& message : m_PendingMessages)
+			result.Add(UTF8_TO_TCHAR(message.c_str()));
+
+		m_PendingMessages.clear();
+	}
+
+	return result;
+}
+
+UWebsocketppConnection* UWebsocketConnection_impl::CreateConnection(FWebsocketConnection connection)
+{
+	auto result = NewObject<UWebsocketppConnection>();
+	result->p_Impl->m_Connection = connection;
+
+	return result;
+}

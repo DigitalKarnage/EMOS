@@ -15,21 +15,19 @@
 	LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include <WebsocketppPCH.h>
+#pragma once
 
-#define LOCTEXT_NAMESPACE "FWebsocketppModule"
+#include <Core.h>
+#include <CoreUObject.h>
+#include <Engine.h>
 
-void FWebsocketppModule::StartupModule()
+#include "ModuleManager.h"
+
+class FEMOSWSModule : public IModuleInterface
 {
-	// This code will execute after your module is loaded into memory; the exact timing is specified in the .uplugin file per-module
-}
+	public:
 
-void FWebsocketppModule::ShutdownModule()
-{
-	// This function may be called during shutdown to clean up your module.  For modules that support dynamic reloading,
-	// we call this function before unloading the module.
-}
-
-#undef LOCTEXT_NAMESPACE
-
-IMPLEMENT_MODULE(FWebsocketppModule, Websocketpp)
+		/** IModuleInterface implementation */
+		virtual void StartupModule() override;
+		virtual void ShutdownModule() override;
+};

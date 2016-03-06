@@ -15,50 +15,34 @@
 	LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include <WebsocketppPCH.h>
-#include <Framework/UWebsocketClient_impl.h>
-#include <Framework/UWebsocketppClient.h>
+#include <EMOSWSPCH.h>
 
-UWebsocketppClient::UWebsocketppClient(const FObjectInitializer& objectInitializer) : Super(objectInitializer)
+#include <Framework/UWebsocketConnection_impl.h>
+#include <Framework/UWebsocketppConnection.h>
+
+UWebsocketppConnection::UWebsocketppConnection(const FObjectInitializer& objectInitializer)
+	: Super(objectInitializer)
 {
-	bReplicates = false;
-	this->PrimaryComponentTick.bCanEverTick = true;
-	this->PrimaryComponentTick.bRunOnAnyThread = false;
-	this->PrimaryComponentTick.bTickEvenWhenPaused = true;
-	this->PrimaryComponentTick.bStartWithTickEnabled = true;
-
-	this->p_Impl = MakeShareable<UWebsocketClient_impl>(new UWebsocketClient_impl());
+	this->SetFlags(RF_RootSet);
+	p_Impl = MakeShareable<UWebsocketConnection_impl>(new UWebsocketConnection_impl());
 }
 
-void UWebsocketppClient::TickComponent(float delta, enum ELevelTick tickType, struct FActorComponentTickFunction* thisTickFunction)
-{
-	Super::TickComponent(delta, tickType, thisTickFunction);
-
-	p_Impl->Poll();
-
-	auto messages = p_Impl->GetMessages();
-
-	if (EventOnMessageReceived.IsBound())
-	{
-		for (auto& message : messages)
-			EventOnMessageReceived.Broadcast(message);
-	}
-}
-
-void UWebsocketppClient::Connect(const FString& RemoteLocation, const int32 Port)
+void UWebsocketppConnection::Close()
 {
 	if (p_Impl.IsValid())
-		p_Impl->Connect(RemoteLocation, Port);
+		p_Impl->Close();
 }
 
-void UWebsocketppClient::Shutdown()
+void UWebsocketppConnection::BroadcastMessage(const FString& message)
 {
 	if (p_Impl.IsValid())
-		p_Impl->Shutdown();
+		p_Impl->BroadcastMessage(message);
 }
 
-void UWebsocketppClient::K2_SendMessage(const FString& Message)
+TArray<FString> UWebsocketppConnection::GetPendingMessages()
 {
 	if (p_Impl.IsValid())
-		p_Impl->SendMessageEx(Message);
+		return p_Impl->GetPendingMessages();
+
+	return TArray<FString>();
 }

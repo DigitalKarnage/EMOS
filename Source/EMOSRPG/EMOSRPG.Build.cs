@@ -35,7 +35,7 @@ public class EMOSRPG : ModuleRules
                 "Json",
                 "JsonUtilities",
                 "UMG",
-                "Websocketpp"
+                "EMOSWS"
             }
         );
 
@@ -52,9 +52,9 @@ public class EMOSRPG : ModuleRules
             {
                 "EMOSRPG/Public",
                 "EMOSRPG/Public/Framework",
-                "Websocketpp",
-                "Websocketpp/Public",
-                "Websocketpp/Public/Framework"
+                "EMOSWS",
+                "EMOSWS/Public",
+                "EMOSWS/Public/Framework"
             }
         );        
 

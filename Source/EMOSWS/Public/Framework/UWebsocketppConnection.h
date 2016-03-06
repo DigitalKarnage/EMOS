@@ -17,13 +17,13 @@
 
 #pragma once
 
-#include <Websocketpp.h>
+#include <EMOSWS.h>
 #include <UObject.h>
 
 #include "UWebsocketppConnection.generated.h"
 
 UCLASS(BlueprintType, META = (DisplayName = "Websocket Connection") )
-class WEBSOCKETPP_API UWebsocketppConnection : public UObject
+class EMOSWS_API UWebsocketppConnection : public UObject
 {
 	GENERATED_BODY()
 

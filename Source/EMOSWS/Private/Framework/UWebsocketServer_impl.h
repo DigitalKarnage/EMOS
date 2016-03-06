@@ -17,7 +17,7 @@
 
 #pragma once
 
-#include <WebsocketppPCH.h>
+#include <EMOSWSPCH.h>
 #include <Framework/UWebsocketppConnection.h>
 
 #if defined(PLATFORM_WINDOWS)

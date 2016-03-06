@@ -15,41 +15,21 @@
 	LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-using System.IO;
-using UnrealBuildTool;
+#include <EMOSWSPCH.h>
 
-public class Websocketpp : ModuleRules
+#define LOCTEXT_NAMESPACE "FEMOSWSModule"
+
+void FEMOSWSModule::StartupModule()
 {
-	public Websocketpp(TargetInfo Target)
-	{
-        PublicDependencyModuleNames.AddRange(
-            new string[]
-            {
-                "Core",
-                "CoreUObject",
-                "Engine",
-            }
-        );
-
-        PublicIncludePaths.AddRange(
-			new string[] {
-                "Websocketpp/Public",
-                "Websocketpp/Public/Framework"
-            }
-		);				
-		
-		PrivateIncludePaths.AddRange(
-			new string[] {
-                "Websocketpp/Private",
-                "Websocketpp/Private/asio",
-                "Websocketpp/Private/Framework",	
-                "Websocketpp/Private/websocketpp"	
-			}
-		);
-
-        if (UEBuildConfiguration.bWithServerCode || UEBuildConfiguration.bBuildEditor)
-            Definitions.Add("WITH_WEBSOCKET_SERVER=1");
-
-        UEBuildConfiguration.bForceEnableExceptions = true;
-    }
+	// This code will execute after your module is loaded into memory; the exact timing is specified in the .uplugin file per-module
 }
+
+void FEMOSWSModule::ShutdownModule()
+{
+	// This function may be called during shutdown to clean up your module.  For modules that support dynamic reloading,
+	// we call this function before unloading the module.
+}
+
+#undef LOCTEXT_NAMESPACE
+
+IMPLEMENT_MODULE(FEMOSWSModule, EMOSWS)

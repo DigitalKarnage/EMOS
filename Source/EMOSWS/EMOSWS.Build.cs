@@ -15,19 +15,38 @@
 	LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#pragma once
+using System.IO;
+using UnrealBuildTool;
 
-#include <Core.h>
-#include <CoreUObject.h>
-#include <Engine.h>
-
-#include "ModuleManager.h"
-
-class FWebsocketppModule : public IModuleInterface
+public class EMOSWS : ModuleRules
 {
-	public:
+	public EMOSWS(TargetInfo Target)
+	{
+        PublicDependencyModuleNames.AddRange(
+            new string[]
+            {
+                "Core",
+                "CoreUObject",
+                "Engine",
+            }
+        );
 
-		/** IModuleInterface implementation */
-		virtual void StartupModule() override;
-		virtual void ShutdownModule() override;
-};
+        PublicIncludePaths.AddRange(
+			new string[] {
+                "EMOSWS/Public",
+                "EMOSWS/Public/Framework"
+            }
+		);				
+		
+		PrivateIncludePaths.AddRange(
+			new string[] {
+                "EMOSWS/Private",
+                "EMOSWS/Private/asio",
+                "EMOSWS/Private/Framework",	
+                "EMOSWS/Private/websocketpp"	
+			}
+		);
+
+        UEBuildConfiguration.bForceEnableExceptions = true;
+    }
+}

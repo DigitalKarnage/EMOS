@@ -15,54 +15,26 @@
 	LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include <WebsocketppPCH.h>
+#pragma once
 
-#include <Framework/UWebsocketConnection_impl.h>
+#include <EMOSWSPCH.h>
 
-void UWebsocketConnection_impl::Close()
-{
-	if (m_Connection.get() != NULL)
-		m_Connection->close(websocketpp::close::status::going_away, "Closed connection by the server");
-}
+#include <UWebsocketserver_impl.h>
+#include <UWebsocketppConnection.h>
 
-void UWebsocketConnection_impl::BroadcastMessage(const FString& message) const
-{
-	if (m_Connection.get() != NULL)
-		m_Connection->send(std::string(TCHAR_TO_UTF8(*message)));
-}
+class UWebsocketConnection_impl
+{	
+	public:
+		UWebsocketConnection_impl() { }
 
-void UWebsocketConnection_impl::AddPendingMessage(const std::string& message)
-{
-	m_PendingMessages.push_back(message);
-}
+		void Close();
+		void BroadcastMessage(const FString& message) const;
+		void AddPendingMessage(const std::string& message);
+		const TArray<FString> GetPendingMessages() const;
 
-const TArray<FString> UWebsocketConnection_impl::GetPendingMessages() const
-{
-	TArray<FString> result;
+		static UWebsocketppConnection* CreateConnection(FWebsocketConnection connection);
 
-	//if (m_PendingMessages.num() > 0)
-	//{
-	//	for (auto& message : m_PendingMessages)
-	//		result.Add(message);
-
-	//	m_PendingMessages->Empty();
-	//}
-
-	if (m_PendingMessages.size() > 0)
-	{
-		for (auto& message : m_PendingMessages)
-			result.Add(UTF8_TO_TCHAR(message.c_str()));
-
-		m_PendingMessages.clear();
-	}
-
-	return result;
-}
-
-UWebsocketppConnection* UWebsocketConnection_impl::CreateConnection(FWebsocketConnection connection)
-{
-	auto result = NewObject<UWebsocketppConnection>();
-	result->p_Impl->m_Connection = connection;
-
-	return result;
-}
+	private:		
+		mutable std::vector<std::string> m_PendingMessages;
+		mutable FWebsocketConnection m_Connection;
+};

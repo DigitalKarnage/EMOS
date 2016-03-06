@@ -22,7 +22,7 @@
 			"LoadingPhase": "Default"
 		},
         {
-			"Name": "Websocketpp",
+			"Name": "EMOSWS",
 			"Type": "Developer",
 			"LoadingPhase": "Default"
 		}

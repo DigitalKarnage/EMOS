@@ -15,7 +15,7 @@
 	LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include <WebsocketppPCH.h>
+#include <EMOSWSPCH.h>
 #include <Framework/UWebsocketClient_impl.h>
 
 void UWebsocketClient_impl::Connect(const FString& RemoteLocation, const int32 Port)

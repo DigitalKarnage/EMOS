@@ -4,12 +4,10 @@ It's important to know, that for this plugin to work in shipping builds, you nee
 
 foreach target add the following line:
 
-'''c++
 public override void GetModulesToPrecompile(TargetInfo Target, List<string> ModuleNames)
 {
     ModuleNames.Add("EMOSRPG");                
 }
-'''
 
 2) You also need to add a few PathIncludes and DependencyModuleNames to your build.cs file.
 
@@ -18,7 +16,6 @@ however still need to be added to the ModuleNames collection
 
 Add the following line to your Build.cs file within the constructor, DO NOT OVERWRITE THE EXISITING ONE
 
-'''c#
 PublicDependencyModuleNames.AddRange(
     new string[] {
         "EMOSRPG"
@@ -31,4 +28,3 @@ PublicIncludePaths.AddRange(
         "EMOSRPG/Public/Framework"
     }
 );
-'''

@@ -15,19 +15,21 @@
 	LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#pragma once
+#include <EMOSDBPCH.h>
 
-#include <Core.h>
-#include <CoreUObject.h>
-#include <Engine.h>
+#define LOCTEXT_NAMESPACE "FEMOSDBModule"
 
-#include "ModuleManager.h"
-
-class FMongoDBModule : public IModuleInterface
+void FEMOSDBModule::StartupModule()
 {
-public:
+	// This code will execute after your module is loaded into memory; the exact timing is specified in the .uplugin file per-module
+}
 
-	/** IModuleInterface implementation */
-	virtual void StartupModule() override;
-	virtual void ShutdownModule() override;
-};
+void FEMOSDBModule::ShutdownModule()
+{
+	// This function may be called during shutdown to clean up your module.  For modules that support dynamic reloading,
+	// we call this function before unloading the module.
+}
+
+#undef LOCTEXT_NAMESPACE
+	
+IMPLEMENT_MODULE(FEMOSDBModule, EMOSDB)

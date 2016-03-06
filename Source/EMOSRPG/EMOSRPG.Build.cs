@@ -64,15 +64,15 @@ public class EMOSRPG : ModuleRules
             // We only link the MongoDB Module, if we building for windows, linux (and eventually mac) servers/editors
             PrivateDependencyModuleNames.AddRange(
                 new string[] {
-                    "MongoDB",
+                    "EMOSDB",
                 }
             );
 
             PrivateIncludePaths.AddRange(
                 new string[] {
-                    "MongoDB",
-                    "MongoDB/Public",
-                    "MongoDB/Public/Framework"
+                    "EMOSDB",
+                    "EMOSDB/Public",
+                    "EMOSDB/Public/Framework"
                 }
             );
 

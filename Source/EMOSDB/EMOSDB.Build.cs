@@ -18,24 +18,24 @@
 using System.IO;
 using UnrealBuildTool;
 
-public class MongoDB : ModuleRules
+public class EMOSDB : ModuleRules
 {
-    public MongoDB(TargetInfo Target)
+    public EMOSDB(TargetInfo Target)
     {
         PublicIncludePaths.AddRange(
             new string[] {
-                "MongoDB/Public",
-                "MongoDB/Public/Framework"
+                "EMOSDB/Public",
+                "EMOSDB/Public/Framework"
             }
         );
 
 
         PrivateIncludePaths.AddRange(
             new string[] {
-                "MongoDB/Private",
-                "MongoDB/Private/Framework",
-                "MongoDB/Private/bsoncxx/v_noabi",
-                "MongoDB/Private/mongocxx/v_noabi"
+                "EMOSDB/Private",
+                "EMOSDB/Private/Framework",
+                "EMOSDB/Private/bsoncxx/v_noabi",
+                "EMOSDB/Private/mongocxx/v_noabi"
             }
         );
 

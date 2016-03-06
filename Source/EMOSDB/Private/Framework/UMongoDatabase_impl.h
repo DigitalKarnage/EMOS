@@ -17,7 +17,7 @@
 
 #pragma once
 
-#include <MongoDBPCH.h>
+#include <EMOSDBPCH.h>
 
 #include <Framework/UMongoCollection_impl.h>
 #include <Framework/UMongoDatabase.h>

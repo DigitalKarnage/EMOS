@@ -17,12 +17,12 @@
 
 #pragma once
 
-#include <MongoDB.h>
+#include <EMOSDB.h>
 
 #include "UMongoDatabase.generated.h"
 
 UCLASS(BlueprintType, ClassGroup = "Database", META = (DisplayName = "MongoDB Database") )
-class MONGODB_API UMongoDatabase : public UObject
+class EMOSDB_API UMongoDatabase : public UObject
 {
 	GENERATED_BODY()
 		

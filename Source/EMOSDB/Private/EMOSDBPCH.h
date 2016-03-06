@@ -15,21 +15,43 @@
 	LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include "MongoDBPCH.h"
+#include <EMOSDB.h>
 
-#define LOCTEXT_NAMESPACE "FMongoDBModule"
+// You should place include statements to your module's private header files here.  You only need to
+// add includes for headers that are used in most of your module's source files though.
 
-void FMongoDBModule::StartupModule()
-{
-	// This code will execute after your module is loaded into memory; the exact timing is specified in the .uplugin file per-module
-}
+#include <JsonUtilities.h>
+#include <Json.h>
 
-void FMongoDBModule::ShutdownModule()
-{
-	// This function may be called during shutdown to clean up your module.  For modules that support dynamic reloading,
-	// we call this function before unloading the module.
-}
+#if defined (USE_WINDOWSPLATFORMTYPES)
+#include "AllowWindowsPlatformTypes.h"
+#endif
 
-#undef LOCTEXT_NAMESPACE
-	
-IMPLEMENT_MODULE(FMongoDBModule, MongoDB)
+#include <bsoncxx/builder/stream/document.hpp>
+#include <bsoncxx/types.hpp>
+
+#include <bsoncxx/v_noabi/bsoncxx/json.hpp>
+#include <bsoncxx/v_noabi/bsoncxx/oid.hpp>
+#include <bsoncxx/v_noabi/bsoncxx/types.hpp>
+#include <bsoncxx/v_noabi/bsoncxx/validate.hpp>
+#include <bsoncxx/v_noabi/bsoncxx/view_or_value.hpp>
+
+#include <mongocxx/v_noabi/mongocxx/client.hpp>
+#include <mongocxx/v_noabi/mongocxx/collection.hpp>
+#include <mongocxx/v_noabi/mongocxx/database.hpp>
+#include <mongocxx/v_noabi/mongocxx/instance.hpp>
+#include <mongocxx/v_noabi/mongocxx/uri.hpp>
+
+#if defined (USE_WINDOWSPLATFORMTYPES)
+#include "HideWindowsPlatformTypes.h"
+#endif
+
+#include <Framework/Structures/FMongoDocumentTemplate.h>
+
+typedef bsoncxx::document::view FBsonDocument;
+
+typedef mongocxx::client FMongoClient;
+typedef mongocxx::collection FMongoCollection;
+typedef mongocxx::database FMongoDatabase;
+typedef mongocxx::instance FMongoInstance;
+typedef mongocxx::uri FMongoUrl;

@@ -17,7 +17,7 @@
 			"LoadingPhase": "Default"
 		},
 		{
-			"Name": "MongoDB",
+			"Name": "EMOSDB",
 			"Type": "Developer",
 			"LoadingPhase": "Default"
 		},

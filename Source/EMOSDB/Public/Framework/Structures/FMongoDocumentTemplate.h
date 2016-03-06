@@ -17,11 +17,11 @@
 
 #pragma once
 
-#include <MongoDB.h>
+#include <EMOSDB.h>
 #include "FMongoDocumentTemplate.generated.h"
 
 USTRUCT(NotBlueprintable)
-struct MONGODB_API FMongoDocumentTemplate
+struct EMOSDB_API FMongoDocumentTemplate
 {
 	GENERATED_USTRUCT_BODY()
 

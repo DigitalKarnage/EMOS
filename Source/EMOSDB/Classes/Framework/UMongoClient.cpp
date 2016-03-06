@@ -15,7 +15,7 @@
 	LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include <MongoDBPCH.h>
+#include <EMOSDBPCH.h>
 
 #include <Framework/UMongoDatabase_impl.h>
 #include <Framework/UMongoClient_impl.h>

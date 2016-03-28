@@ -50,11 +50,25 @@
 #endif
 
 #if defined(PLATFORM_WINDOWS)
+
 #pragma warning( push )
 #pragma warning( disable : 4592)
 #pragma warning( disable : 4191)
+#pragma warning( disable : 4459)
 
-#include "AllowWindowsPlatformTypes.h"
+#define INT ::INT
+#define UINT ::UINT
+#define DWORD ::DWORD
+#define FLOAT ::FLOAT
+
+#ifndef TRUE
+	#define TRUE 1
+#endif
+
+#ifndef FALSE
+	#define FALSE 0
+#endif
+
 #endif
 
 #include "websocketpp/config/asio_no_tls.hpp"
@@ -63,9 +77,22 @@
 #include "websocketpp/client.hpp"
 
 #if defined(PLATFORM_WINDOWS)
+
 #pragma warning( pop )
 
-#include "HideWindowsPlatformTypes.h"
+#undef INT
+#undef UINT
+#undef DWORD
+#undef FLOAT
+
+#ifdef TRUE
+	#undef TRUE
+#endif
+
+#ifdef FALSE
+	#undef FALSE
+#endif
+
 #endif
 
 typedef websocketpp::client<websocketpp::config::asio_client> FWebsocketClient;
